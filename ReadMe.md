@@ -22,30 +22,30 @@ Lastly I will present a simple design for the acutal RISC-V ISA simulator part o
 ### Minimum viable solution
 Presented as overall component blocks a minimal solution simulator must have:
 
-- [] A command line interface that can takes an input file and an output file.
-- [] Support for reading a binary input file to memory.
-- [] The actual RISC-V ISA simulator.
-- [] Support for writing the registers to a binary file.
+- [x] A command line interface that can takes an input file and an output file.
+- [x] Support for reading a binary input file to memory.
+- [ ] The actual RISC-V ISA simulator.
+- [ ] Support for writing the registers to a binary file.
 
 Furthermore the project must support the following features for convenience:
 
-- [] A make-file with instructions to compile the program.
-- [] Inclusion of test files to verify correct simulator implementation.
+- [ ] A make-file with instructions to compile the program.
+- [ ] Inclusion of test files to verify correct simulator implementation.
 
 ### Desireable improvements
 The following represents the "nice-to-have" additions I would like to implement in my simulator. They are loosely ranked from simple to most advanced.
 
-- [] CLI support for progame usage.
-- [] CLI support for verbosity + debug prints to console while executing simulator,
-- [] Debug information on simulator error, e.g. `fwrite` failure, or on reading unknown instruction.
-- [] CLI support for a "copy" argument, that overwrites program behaviour to copy input file to output file. Useable for testing file read/write implementation. 
-- [] Automated tests via a makefile.
-- [] Refactor simulator implementation to emulate a datapath.
-- [] Expand simulator implementation to have realistic control path.
-- [] Expand simulator implementation to a 5 stage pipelined processor.
-- [] Add CLI option to single step processor + support for intercepting keyboard inputs while executing.
-- [] Expose processor states to be available in main().
-- [] Implement an ASCII UI that displays processor state.
+- [x] CLI support for progame usage.
+- [x] CLI support for verbosity + debug prints to console while executing simulator,
+- [ ] Debug information on simulator error, e.g. `fwrite` failure, or on reading unknown instruction.
+- [x] CLI support for a "copy" argument, that overwrites program behaviour to copy input file to output file. Useable for testing file read/write implementation. 
+- [ ] Automated tests via a makefile.
+- [ ] Refactor simulator implementation to emulate a datapath.
+- [ ] Expand simulator implementation to have realistic control path.
+- [ ] Expand simulator implementation to a 5 stage pipelined processor.
+- [ ] Add CLI option to single step processor + support for intercepting keyboard inputs while executing.
+- [ ] Expose processor states to be available in main().
+- [ ] Implement an ASCII UI that displays processor state.
 
 ### ISA simulator design
 
@@ -78,9 +78,9 @@ The sequence diagram below how they can be put together to form a minimal ISA si
 Among the relevant references I would like to highlight **Ripes** as a very well executed graphical RISC-V processor simulator.
 
 
-* Computer Organization and Design RISC-V Edition, The Hardware Software Interface, by David A. Patterson and John L. Hennessy, 2nd edition, 2021, ISBN: 978-0-12-820331-6
+* Computer Organization and Design RISC-V Edition, The Hardware Software Interface, by David A. Patterson and John L. Hennessy, 2nd edition, 2021, ISBN: 978-0-12-820331-6.
 * [Ripes - A graphical processor simulator and assembly editor for the RISC-V ISA](https://github.com/mortbopet/Ripes/)
-* [RISC-V ISA specification](https://riscv.org/specifications/ratified/) - Goto "View Ratified Specs"->"ISA Volume 1"/ISA Volume 2"
-* [DTU Course database entry](https://kurser.dtu.dk/course/02155)
-* [Course website](https://courses.compute.dtu.dk/02155/)
-* [Course Github with labs and final assignments](https://github.com/schoeberl/cae-lab)
+* [RISC-V ISA specification](https://riscv.org/specifications/ratified/) - Goto **View Ratified Specs** -> **ISA Volume 1** or **ISA Volume 2**.
+* [DTU Course database entry](https://kurser.dtu.dk/course/02155).
+* [Course website](https://courses.compute.dtu.dk/02155/).
+* [Course Github with labs and final assignments](https://github.com/schoeberl/cae-lab).
