@@ -1,0 +1,9 @@
+# Ignore binaries
+*.out
+
+# Ignore IDE related files
+.vscode/
+
+# Ignore PDFs
+*.pdf
+
