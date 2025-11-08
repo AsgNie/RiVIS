@@ -5,7 +5,7 @@
 #include <stdlib.h> // Suplies EXIT_FAILURE, EXIT_SUCCESS, exit()
 #include <getopt.h> // For parsing command line options. getop() ect.
 #include <libgen.h> // Supplies basename() // TODO: Seems unnecessary
-//#include "isa.h"
+#include "isaSimSoft.h"
 
 /*** Defines ***/
 #define OPTSTR "vi:o:ch"
@@ -46,10 +46,10 @@ int main(int argc, char *argv[])
     //opterr = 0;
     options_t options = {0, false, NULL, NULL};
     ressources_t ressources = {false, false};
-    
+
     uint8_t* prog = NULL;;
     int32_t progSize = -1;
-    uint32_t regFile[32] = {};
+    int32_t regFile[32] = {};
 
 
     // Handle command-line arguments
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
     }
     fclose(options.inFile);
     ressources.inFileOpen = false;
-    
+
     //TODO: Reconsider when acatual tests are available
     // If the testing flag -c is set, copy input file to output file and exit
     if (options.copyEnabled)
@@ -120,9 +120,10 @@ int main(int argc, char *argv[])
         }
         releaseAndExit(EXIT_SUCCESS, &options, &ressources, prog);
     }
-    
+
     // Run program
-    // int8_t res = isaRunSimulation(prog, progSize, regFile, options.verbosity);
+    int8_t res = isaSimSoftRun(prog, progSize, regFile, options.verbosity);
+    res += 2; // Dummy
     // Store result to file
     // Print info
     releaseAndExit(EXIT_SUCCESS, &options, &ressources, prog);
@@ -152,7 +153,7 @@ void releaseAndExit(int exitStatus, const options_t* options, ressources_t* ress
     {
         free(progMem);
     }
-    
+
     exit(exitStatus);
 }
 

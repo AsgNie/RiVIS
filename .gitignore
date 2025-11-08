@@ -1,5 +1,9 @@
 # Ignore binaries
 *.out
+RiVIS
+
+# Ignore object files
+*.o
 
 # Ignore IDE related files
 .vscode/
