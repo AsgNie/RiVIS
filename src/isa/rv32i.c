@@ -165,7 +165,7 @@ rv32i_opcodeTypes_t rv32iOpcodeToOpcodeType(uint8_t opcode)
     case RV32I_OPCODE_ALU:
         return RV32I_OPCODE_TYPE_R;
     case RV32I_OPCODE_STORE:
-        return RV32I_OPCODE_TYPE_S; 
+        return RV32I_OPCODE_TYPE_S;
     default:
         return RV32I_OPCODE_TYPE_UNKNOWN;
     }
