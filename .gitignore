@@ -1,13 +1,18 @@
-# Ignore binaries
+# Binaries
 *.out
 RiVIS
 
-# Ignore object files
+# Object files
 *.o
 
-# Ignore IDE related files
+# IDE related files
 .vscode/
 
-# Ignore PDFs
+# PDFs
 *.pdf
 
+# Misc folder
+misc/
+
+# Build folder
+build/
