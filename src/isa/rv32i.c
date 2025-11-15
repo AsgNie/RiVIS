@@ -1,5 +1,6 @@
 #include "rv32i.h"
 #include <assert.h>
+#include <stdio.h>
 
 rv32i_instruct_t rv32iDecodeInstructType(int32_t instruct)
 {
@@ -82,35 +83,36 @@ int32_t rv32iGenerateImmediate(int32_t instruct)
     switch (rv32iOpcodeToOpcodeType(opcode))
     {
     case RV32I_OPCODE_TYPE_I:
-        imm = (instruct) >> 20;
+        imm  = (instruct >> 20);
         break;
     case RV32I_OPCODE_TYPE_S:
-        imm  = (instruct >> 7) & 0x0000001f;
-        imm |= instruct >> 20;
+        imm  = (instruct >>  7) & 0b00000000000000000000000000011111;   // imm[4:0]
+        imm |= (instruct >> 20) & 0b11111111111111111111111111100000;   // imm[11:5] with sign extension
         break;
     case RV32I_OPCODE_TYPE_B:
-        imm |= (instruct >> 7 ) & 0x0000001e;    // imm[4:1]
-        imm |= (instruct >> 20) & 0x00000fc0;    // imm[10:5];
-        imm |= (instruct << 4 ) & 0x00000800;    // imm[11]
-        imm |= (instruct >> 19) & 0xfffff000;    // imm[12] with sign extension
+        imm  = (instruct >>  7) & 0b00000000000000000000000000011110;   // imm[4:1]
+        imm |= (instruct >> 20) & 0b00000000000000000000011111100000;   // imm[10:5];
+        imm |= (instruct <<  4) & 0b00000000000000000000100000000000;   // imm[11]
+        imm |= (instruct >> 19) & 0b11111111111111111111000000000000;   // imm[12] with sign extension
         break;
     case RV32I_OPCODE_TYPE_U:
-        imm = instruct & 0xfffff000;    // imm[31:12]
+        imm  = (instruct      ) & 0b11111111111111111111000000000000;   // imm[31:12]
         break;
     case RV32I_OPCODE_TYPE_J:
-        imm  = (instruct >> 0 ) & 0x000ff000;   // imm[19:12]
-        imm |= (instruct >> 9 ) & 0x00000800;   // imm[11]
-        imm |= (instruct >> 21) & 0x000007fe;   // imm[10:1]
-        imm |= (instruct >> 11) & 0xfff00000;   // imm[20] with sign extension
+        imm  = (instruct >>  0) & 0b00000000000011111111000000000000;   // imm[19:12]
+        imm |= (instruct >>  9) & 0b00000000000000000000100000000000;   // imm[11]
+        imm |= (instruct >> 20) & 0b00000000000000000000011111111110;   // imm[10:1]
+        imm |= (instruct >> 11) & 0b11111111111100000000000000000000;   // imm[20] with sign extension
         break;
     case RV32I_OPCODE_TYPE_R:
-        imm = -1;
+        imm  = -1;  // Don't care condition
         break;
     case RV32I_OPCODE_TYPE_UNKNOWN:
-        imm = -2;
+        imm  = -2;  // Don't care condition
         break;
     default:
-        imm = -3;
+        assert(0); // This condition should be unreachable
+        imm  = -3;
         break;
     };
 
@@ -119,32 +121,32 @@ int32_t rv32iGenerateImmediate(int32_t instruct)
 
 uint8_t rv32iGetFunct3(int32_t instruct)
 {
-    return (instruct >> 12) & 0x03;
+    return (instruct >> 12) & 0b00000000000000000000000000000111;
 }
 
 uint8_t rv32iGetFunct7(int32_t instruct)
 {
-    return (instruct >> 25) & 0x7f;
+    return (instruct >> 25) & 0b00000000000000000000000000000111;
 }
 
 uint8_t rv32iGetOpcode(int32_t instruct)
 {
-    return (instruct >> 0 ) & 0x7f;
+    return (instruct >>  0) & 0b00000000000000000000000001111111;
 }
 
 uint8_t rv32iGetRd(int32_t instruct)
 {
-    return (instruct >> 7 ) & 0x1f;
+    return (instruct >>  7) & 0b00000000000000000000000000011111;
 }
 
 uint8_t rv32iGetRs1(int32_t instruct)
 {
-    return (instruct >> 15) & 0x1f;
+    return (instruct >> 15) & 0b00000000000000000000000000011111;
 }
 
 uint8_t rv32iGetRs2(int32_t instruct)
 {
-    return (instruct >> 20) & 0x1f;
+    return (instruct >> 20) & 0b00000000000000000000000000011111;
 }
 
 rv32i_opcodeTypes_t rv32iOpcodeToOpcodeType(uint8_t opcode)
