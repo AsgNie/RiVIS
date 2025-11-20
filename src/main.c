@@ -13,7 +13,8 @@
 #define ERR_FOPEN_OUTPUT "fopen(output, w) failed"
 #define ERR_FOPEN_INPUT "fopen(input, r) failed"
 #define DEFAULT_PROGNAME "RiVIS"
-#define PROGRAM_MAX_SIZE_BYTES ( 10240 ) // 10 MiBs // TODO: Consider if I want a max
+#define PROGRAM_SIZE_BYTES          ( 1048576 ) // 1 MiB
+#define REGISTRY_FILE_SIZE_BYTES    ( 128 )     // 32 32-bit registers
 
 /* external declarations */
 extern int errno;
@@ -48,7 +49,7 @@ int main(int argc, char *argv[])
     ressources_t ressources = {false, false};
 
     uint8_t* prog = NULL;;
-    int32_t progSize = -1;
+    int32_t inFileSize = -1;
     int32_t regFile[32] = {};
 
 
@@ -101,19 +102,31 @@ int main(int argc, char *argv[])
         releaseAndExit(EXIT_FAILURE, &options, &ressources, prog);
     }
 
-    progSize = readInputFileToMemory(options.inFile, prog);
-    if (progSize <= 0 )
+    // Allocate and zero initialise program memory
+    prog = calloc(PROGRAM_SIZE_BYTES, sizeof(uint8_t));
+    if (prog == NULL)
+    {
+        fprintf(stderr, "Error allocating program memory\n");
+        releaseAndExit(EXIT_FAILURE, &options, &ressources, prog);
+    }
+
+    inFileSize = readInputFileToMemory(options.inFile, prog);
+    if (inFileSize <= 0 )
     {
         releaseAndExit(EXIT_FAILURE, &options, &ressources, prog);
     }
     fclose(options.inFile);
     ressources.inFileOpen = false;
+    if (options.verbosity)
+    {
+        fprintf(stderr, "Input file of size %d B read\n", inFileSize);
+    }
 
     //TODO: Reconsider when acatual tests are available
     // If the testing flag -c is set, copy input file to output file and exit
     if (options.copyEnabled)
     {
-        if (fwrite(prog, sizeof(uint8_t), progSize, options.outFile) != progSize )
+        if (fwrite(prog, sizeof(uint8_t), inFileSize, options.outFile) != inFileSize )
         {
             perror("Output file not written to end");
             releaseAndExit(EXIT_FAILURE, &options, &ressources, prog);
@@ -122,10 +135,15 @@ int main(int argc, char *argv[])
     }
 
     // Run program
-    int8_t res = isaSimSoftRun(prog, progSize, regFile, options.verbosity);
-    res += 2; // Dummy
+    int8_t res = isaSimSoftRun(prog, PROGRAM_SIZE_BYTES, regFile, options.verbosity);
+
     // Store result to file
-    // Print info
+    if (fwrite(regFile, sizeof(uint8_t), REGISTRY_FILE_SIZE_BYTES, options.outFile) != REGISTRY_FILE_SIZE_BYTES )
+    {
+        perror("Output file not written to end");
+    }
+
+    //Print info
     releaseAndExit(EXIT_SUCCESS, &options, &ressources, prog);
 }
 
@@ -159,26 +177,25 @@ void releaseAndExit(int exitStatus, const options_t* options, ressources_t* ress
 
 int32_t readInputFileToMemory(FILE *file, uint8_t *prog)
 {
-    int32_t progSize = -1;
+    int32_t fileSize = -1;
 
     if( fseek(file, 0, SEEK_END) != 0 )
     {
         perror("Unable to locate end of input file");
     }
-    else if ( (progSize = ftell(file)) <= 0)
+    else if ( (fileSize = ftell(file)) <= 0)
     {
         perror("Unable to read ftell() filesize, or filesize == 0");
     }
     else
     {
         rewind(file); // Rewind to start file
-        prog = malloc(sizeof(uint8_t) * progSize);
-        if (fread(prog, sizeof(uint8_t), progSize, file) != progSize )
+        if (fread(prog, sizeof(uint8_t), fileSize, file) != fileSize )
         {
             perror("Input file not read to end");
-            progSize = -1;
+            fileSize = -1;
         }
     }
 
-    return progSize;
+    return fileSize;
 }
