@@ -10,19 +10,19 @@ Collection of defines and functionalities generally useable across multiple type
 RV32I Base Instruction Set opcodes as given in The RISC-V Instruction Set Manual
 Volume I, Version 20250508, Chapter 35: RV32/64G Instruction Set Listings.
 */
+#define RV32I_OPCODE_ALU        (0b0110011)
+#define RV32I_OPCODE_ALU_IMM    (0b0010011)
+#define RV32I_OPCODE_AUIPC      (0b0010111)
 #define RV32I_OPCODE_BRANCH     (0b1100011)
-#define RV32I_OPCODE_LUI        (0b0110111)
+#define RV32I_OPCODE_ENV        (0b1110011)
+#define RV32I_OPCODE_FEN_PAUS   (0b0001111)
 #define RV32I_OPCODE_JAL        (0b1101111)
 #define RV32I_OPCODE_JALR       (0b1100111)
 #define RV32I_OPCODE_LOAD       (0b0000011)
+#define RV32I_OPCODE_LUI        (0b0110111)
 #define RV32I_OPCODE_STORE      (0b0100011)
-#define RV32I_OPCODE_ALU_IMM    (0b0010011)
-#define RV32I_OPCODE_ALU        (0b0110011)
-#define RV32I_OPCODE_FENCE      (0b0110011)
-#define RV32I_OPCODE_ENV        (0b1110011)
 
-/* All supported rv32i instructions including 3 formats for unsupported instructions to differentiate between instructions where funct3 and funct7
-should be evaluated for error handling. */
+/* Supported rv32i instructions */
 typedef enum rv32i_instruct_t
 {
     RV32I_NOT_SUPPORTED = -1, RV32I_ADD = 0, RV32I_ADDI, RV32I_AND, RV32I_ANDI, RV32I_AUIPC, RV32I_BEQ, RV32I_BGE, RV32I_BGEU, RV32I_BLT,
@@ -39,15 +39,23 @@ typedef enum rv32i_opcodeTypes_t
 
 
 enum rv32i_instruct_t rv32iDecodeInstructType(int32_t instruct);
-int32_t rv32iGenerateImmediate(int32_t instruct);
-uint8_t rv32iGetFunct3(int32_t instruct);
-uint8_t rv32iGetFunct7(int32_t instruct);
-uint8_t rv32iGetOpcode(int32_t instruct);
-uint8_t rv32iGetRd (int32_t instruct);
-uint8_t rv32iGetRs1(int32_t instruct);
-uint8_t rv32iGetRs2(int32_t instruct);
+int32_t  rv32iGenerateImmediate(int32_t instruct);
+uint16_t rv32iGetFunct12(int32_t instruct);
+uint8_t  rv32iGetFunct3 (int32_t instruct);
+uint8_t  rv32iGetFunct7 (int32_t instruct);
+uint8_t  rv32iGetOpcode (int32_t instruct);
+uint8_t  rv32iGetRd (int32_t instruct);
+uint8_t  rv32iGetRs1(int32_t instruct);
+uint8_t  rv32iGetRs2(int32_t instruct);
+int8_t   rv32iLoadByte    (uint8_t* adr);
+int16_t  rv32iLoadHalfWord(uint8_t* adr);
+int32_t  rv32iLoadWord    (uint8_t* adr);
 enum rv32i_opcodeTypes_t rv32iOpcodeToOpcodeType (uint8_t opcode);
-
+int32_t  rv32iSignExtentByte    (uint8_t  input);
+int32_t  rv32iSignExtentHalfWord(uint16_t input);
+void     rv32iStoreByte    (uint8_t* adr, uint8_t  value);
+void     rv32iStoreHalfWord(uint8_t* adr, uint16_t value);
+void     rv32iStoreWord    (uint8_t* adr, uint32_t value);
 
 
 #endif //RV32I_H

@@ -32,6 +32,14 @@ TEST(rv32i, GetFunct7)
     EXPECT_EQ(rv32iGetFunct7(INSTRUCT_SUB_RD_21_RS1_10_RS2_0), 0b0100000);
 }
 
+// The only usecase in this implementation is for funct12 = 1. Test that, and that any other case does not leak.
+TEST(rv32i, GetFunc12)
+{
+    int32_t instruct = 0b00000000000100000000000000000000;
+    EXPECT_EQ(rv32iGetFunct12(instruct), 1);
+    EXPECT_EQ(rv32iGetFunct12(!instruct), 0);
+}
+
 TEST(rv32i, GetRd)
 {
     EXPECT_EQ(rv32iGetRd(0xffffffff), 0b11111);
@@ -68,8 +76,14 @@ TEST(rv32i, OpcodeToOpcodeType)
 TEST(rv32i, DecodeInstructionType)
 {
     EXPECT_EQ(rv32iDecodeInstructType(INSTRUCT_ADDI_RD_13_RS1_31_IMM_NEG1), RV32I_ADDI);
-    EXPECT_EQ(rv32iDecodeInstructType(INSTRUCT_BGE_RS1_2_RS2_17_IMM_MIN), RV32I_BGE); // Not implemented yet
+    EXPECT_EQ(rv32iDecodeInstructType(INSTRUCT_BGE_RS1_2_RS2_17_IMM_MIN), RV32I_BGE);
     EXPECT_EQ(rv32iDecodeInstructType(INSTRUCT_SUB_RD_21_RS1_10_RS2_0), RV32I_SUB);
+
+    int32_t instruct = 0;
+    instruct |= RV32I_OPCODE_ALU;
+    instruct |= (0b000 << 7);       // Funct3 for add/sub
+    instruct |= (0b0000001 << 25);  // Illegal funct7 for given opcode and funct3
+    EXPECT_EQ(rv32iDecodeInstructType(instruct), RV32I_NOT_SUPPORTED);
 }
 
 /*
@@ -118,4 +132,94 @@ TEST(rv32i, GenerateImmediate)
     /*** Testing real instructions ***/
     EXPECT_EQ(rv32iGenerateImmediate(INSTRUCT_ADDI_RD_13_RS1_31_IMM_NEG1), -1);         // I-Type
     EXPECT_EQ(rv32iGenerateImmediate(INSTRUCT_BGE_RS1_2_RS2_17_IMM_MIN), -(0x1000));    // B-Type
+}
+
+TEST(rv32i, SignExtentByte)
+{
+    EXPECT_EQ(rv32iSignExtentByte((int8_t) 0b11001100), 0b111111111111111111111111'11001100);
+    EXPECT_EQ(rv32iSignExtentByte((int8_t) 0b01001100), 0b000000000000000000000000'01001100);
+}
+
+TEST(rv32i, SignExtentHalfWord)
+{
+    EXPECT_EQ(rv32iSignExtentHalfWord((int16_t) 0b11001100'00000000), 0b1111111111111111'11001100'00000000);
+    EXPECT_EQ(rv32iSignExtentHalfWord((int16_t) 0b01001100'00000000), 0b0000000000000000'01001100'00000000);
+}
+
+TEST(rv32i, LoadByte)
+{
+    uint8_t A[5] = {0b11111111, 0b00000010, 0b10101010, 0b01010101, 0b10000000};
+    EXPECT_EQ(rv32iLoadByte(A+0), (int8_t) 0b11111111);
+    EXPECT_EQ(rv32iLoadByte(A+1), (int8_t) 0b00000010);
+    EXPECT_EQ(rv32iLoadByte(A+2), (int8_t) 0b10101010);
+    EXPECT_EQ(rv32iLoadByte(A+3), (int8_t) 0b01010101);
+    EXPECT_EQ(rv32iLoadByte(A+4), (int8_t) 0b10000000);
+}
+
+TEST(rv32i, LoadHalfWord)
+{
+    uint8_t A[5] = {0b11111111, 0b00000010, 0b10101010, 0b01010101, 0b10000000};
+    EXPECT_EQ(rv32iLoadHalfWord(A+0), (int16_t) 0b00000010'11111111);
+    EXPECT_EQ(rv32iLoadHalfWord(A+1), (int16_t) 0b10101010'00000010);
+    EXPECT_EQ(rv32iLoadHalfWord(A+2), (int16_t) 0b01010101'10101010);
+    EXPECT_EQ(rv32iLoadHalfWord(A+3), (int16_t) 0b10000000'01010101);
+}
+
+TEST(rv32i, LoadWord)
+{
+    uint8_t A[5] = {0b11111111, 0b00000010, 0b10101010, 0b01010101, 0b10000000};
+    EXPECT_EQ(rv32iLoadWord(A+0), (int32_t) 0b01010101'10101010'00000010'11111111);
+    EXPECT_EQ(rv32iLoadWord(A+1), (int32_t) 0b10000000'01010101'10101010'00000010);
+}
+
+TEST(rv32i, StoreByte)
+{
+    uint8_t A[5] = {};
+    rv32iStoreByte(A+0, 0b11111111);
+    rv32iStoreByte(A+1, 0b00000001);
+    rv32iStoreByte(A+2, 0b10101010);
+    rv32iStoreByte(A+3, 0b01010101);
+    rv32iStoreByte(A+4, 0b00110011);
+    EXPECT_EQ(A[0], 0b11111111);
+    EXPECT_EQ(A[1], 0b00000001);
+    EXPECT_EQ(A[2], 0b10101010);
+    EXPECT_EQ(A[3], 0b01010101);
+    EXPECT_EQ(A[4], 0b00110011);
+
+    rv32iStoreByte(A+0, 0b10111111);
+    EXPECT_EQ(A[0], 0b10111111);
+}
+
+TEST(rv32i, StoreHalfWord)
+{
+    uint8_t A[5] = {};
+    rv32iStoreHalfWord(A+0, 0b00000001'11111111);
+    rv32iStoreHalfWord(A+2, 0b01010101'10101010);
+    EXPECT_EQ(A[0], 0b11111111);
+    EXPECT_EQ(A[1], 0b00000001);
+    EXPECT_EQ(A[2], 0b10101010);
+    EXPECT_EQ(A[3], 0b01010101);
+    EXPECT_EQ(A[4], 0b00000000);
+
+    rv32iStoreHalfWord(A+2, 0b11111111'11111111);
+    EXPECT_EQ(A[2], 0b11111111);
+    EXPECT_EQ(A[3], 0b11111111);
+}
+
+TEST(rv32i, StoreWord)
+{
+    uint8_t A[5] = {};
+    rv32iStoreWord(A+0, 0b01010101'10101010'00000001'11111111);
+    EXPECT_EQ(A[0], 0b11111111);
+    EXPECT_EQ(A[1], 0b00000001);
+    EXPECT_EQ(A[2], 0b10101010);
+    EXPECT_EQ(A[3], 0b01010101);
+    EXPECT_EQ(A[4], 0b00000000);
+
+    rv32iStoreWord(A+1, 0b11111111'11111111'11111111'11111111);
+    EXPECT_EQ(A[0], 0b11111111);
+    EXPECT_EQ(A[1], 0b11111111);
+    EXPECT_EQ(A[2], 0b11111111);
+    EXPECT_EQ(A[3], 0b11111111);
+    EXPECT_EQ(A[4], 0b11111111);
 }
