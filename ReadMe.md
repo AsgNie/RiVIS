@@ -10,7 +10,7 @@ Here the requirements on the simulator for the assignment specification will sum
 * The simulator must be able to read and execute RISC-V instructions from a binary input file.
 * The simulator must stop executing either at the end of the input file, or if the `ecall`-instruction is called with an input of `10`.
 * The simulator must write out the 32 registers to a binary file at end of program, from lowest to highest.
-* The simulator must implement a 1 MB stack, and initialise the stack pointer to it.
+* The simulator must implement 1 MB program memory (or possible more). Test programs will set stack pointer to `0x100000` with the stack growing towards lower addresses.
 * The simulator must be able to execute on an x64 machine running Ubuntu.
 
 The correct implementation of the simulator will be judged by comparing the simulators binary output of the 32 registers to known solutions for a set of test files.
@@ -24,12 +24,12 @@ Presented as overall component blocks a minimal solution simulator must have:
 
 - [x] A command line interface that can takes an input file and an output file.
 - [x] Support for reading a binary input file to memory.
-- [ ] The actual RISC-V ISA simulator.
-- [ ] Support for writing the registers to a binary file.
+- [x] The actual RISC-V ISA simulator.
+- [x] Support for writing the registers to a binary file.
 
 Furthermore the project must support the following features for convenience:
 
-- [ ] A make-file with instructions to compile the program.
+- [x] A make-file with instructions to compile the program.
 - [ ] Inclusion of test files to verify correct simulator implementation.
 
 ### Desireable improvements
@@ -37,13 +37,14 @@ The following represents the "nice-to-have" additions I would like to implement 
 
 - [x] CLI support for progame usage.
 - [x] CLI support for verbosity + debug prints to console while executing simulator,
-- [ ] Debug information on simulator error, e.g. `fwrite` failure, or on reading unknown instruction.
+- [x] Debug information on simulator error, e.g. `fwrite` failure, or on reading unknown instruction.
 - [x] CLI support for a "copy" argument, that overwrites program behaviour to copy input file to output file. Useable for testing file read/write implementation. 
-- [ ] Automated tests via a makefile.
+- [x] Automated unit tests.
+- [ ] Automated system tests of binary programs with known results.
 - [ ] Refactor simulator implementation to emulate a datapath.
 - [ ] Expand simulator implementation to have realistic control path.
 - [ ] Expand simulator implementation to a 5 stage pipelined processor.
-- [ ] Add CLI option to single step processor + support for intercepting keyboard inputs while executing.
+- [ ] Add CLI option to single step simulation.
 - [ ] Expose processor states to be available in main().
 - [ ] Implement an ASCII UI that displays processor state.
 
@@ -51,18 +52,17 @@ The following represents the "nice-to-have" additions I would like to implement 
 
 At its core, the simulator needs to support the following parts:
 
-* Array of instructions, i.e. the program to execute
-* Program counter
+* Memory to hold program instructions and stack
 * Register file
-* Initialisation of stack memory
-* Decoder for translating binary instructions opcode/funct3/funct7 to an operation
+* Decoder for translating binary instructions opcode/funct3/funct7/funct12 to an operation.
+* Immediate generator.
 * Switch case over the operation to execute instruction, e.g. add, load, branch ect.
 * A while-loop that executes untill end of instructions array, or `ecall`-instruction with exit value, whichever comes first.
 
 It has the following inputs from the caller (main):
 * A pointer to program
 * Program size
-* A pointer to the register file (needed for output)
+* A pointer to the register file (for output)
 
 It has the following output to the caller (main)
 * A pointer to (possible modified) program
