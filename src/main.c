@@ -8,8 +8,8 @@
 #include "isaSimSoft.h"
 
 /*** Defines ***/
-#define OPTSTR "vi:o:ch"
-#define USAGE_FMT  "%s [-v] [-i <inputfile>] [-o <outputfile>] [-c] [-h]\n"
+#define OPTSTR "vi:o:h"
+#define USAGE_FMT  "%s [-v] [-i <inputfile>] [-o <outputfile>] [-h]\n"
 #define ERR_FOPEN_OUTPUT "fopen(output, w) failed"
 #define ERR_FOPEN_INPUT "fopen(input, r) failed"
 #define DEFAULT_PROGNAME "RiVIS"
@@ -25,7 +25,6 @@ extern int opterr, optind; // TODO: Do I need those?
 typedef struct
 {
     int8_t      verbosity;
-    bool        copyEnabled;
     FILE*       inFile;
     FILE*       outFile;
 } options_t;
@@ -45,7 +44,7 @@ int main(int argc, char *argv[])
 {
     int opt;
     //opterr = 0;
-    options_t options = {0, false, NULL, NULL};
+    options_t options = {0, NULL, NULL};
     ressources_t ressources = {false, false};
 
     uint8_t* prog = NULL;;
@@ -80,9 +79,6 @@ int main(int argc, char *argv[])
             break;
         case 'v':
             options.verbosity += 1;
-            break;
-        case 'c':
-            options.copyEnabled = true;
             break;
         case 'h':
             usage(basename(argv[0]));
@@ -120,18 +116,6 @@ int main(int argc, char *argv[])
     if (options.verbosity)
     {
         fprintf(stderr, "Input file of size %d B read\n", inFileSize);
-    }
-
-    //TODO: Reconsider when acatual tests are available
-    // If the testing flag -c is set, copy input file to output file and exit
-    if (options.copyEnabled)
-    {
-        if (fwrite(prog, sizeof(uint8_t), inFileSize, options.outFile) != inFileSize )
-        {
-            perror("Output file not written to end");
-            releaseAndExit(EXIT_FAILURE, &options, &ressources, prog);
-        }
-        releaseAndExit(EXIT_SUCCESS, &options, &ressources, prog);
     }
 
     // Run program
