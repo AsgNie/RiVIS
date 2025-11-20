@@ -237,12 +237,12 @@ uint8_t rv32iGetRs2(int32_t instruct)
     return (instruct >> 20) & 0b00000000000000000000000000011111;
 }
 
-int8_t rv32iLoadByte(uint8_t *adr)
+int32_t rv32iLoadByte(uint8_t *adr)
 {
     return *adr;
 }
 
-int16_t rv32iLoadHalfWord(uint8_t *adr)
+int32_t rv32iLoadHalfWord(uint8_t *adr)
 {
     // TODO: Make solution for both endianness - Currently little endian is assumed
     return ( (int16_t) *adr | ( (int16_t) *(adr+1) << 8 ) );

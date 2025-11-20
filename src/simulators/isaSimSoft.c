@@ -21,6 +21,7 @@ typedef enum execute_return_values_t
 static int32_t instructionFetch(uint32_t pc, const uint8_t* const prog);
 static void readInputRegisters(int32_t instruct, inputRegs_t* inputRegs);
 static enum execute_return_values_t instructionExecute(enum rv32i_instruct_t instrType, inputRegs_t* inputRegs, int32_t regFile[32], uint8_t *prog, int32_t imm, uint32_t* pcPtr);
+static void printRegisterFile(int32_t regFile[32]);
 
 int8_t isaSimSoftRun(uint8_t *prog, uint32_t progSize, int32_t regFile[32], int8_t verbosity)
 {
@@ -47,6 +48,12 @@ int8_t isaSimSoftRun(uint8_t *prog, uint32_t progSize, int32_t regFile[32], int8
         readInputRegisters(instruction, &inputRegs);
         imm = rv32iGenerateImmediate(instruction);
 
+        if (verbosity)
+        {
+            fprintf(stderr, ">>>SoftSim: Instruction type %d with value 0x%08x at PC = %d\n",(uint8_t) instructType, instruction, (pc-4));
+            fprintf(stderr, "imm = %d\n", imm);
+        }
+
         /* EX, MEM, WB: Execute, Memory, Write back */
         executeReturnVal = instructionExecute(instructType, &inputRegs, regFile, prog, imm, &pc);
         switch (executeReturnVal)
@@ -67,6 +74,10 @@ int8_t isaSimSoftRun(uint8_t *prog, uint32_t progSize, int32_t regFile[32], int8
             fprintf(stderr, "SoftSim error: Unknown instructExecute command at PC = %d\n", (pc-4));
             assert(0); // Should not exist
             return -1;
+        }
+        if (verbosity)
+        {
+            printRegisterFile(regFile);
         }
     }
 
@@ -96,7 +107,6 @@ enum execute_return_values_t instructionExecute(enum rv32i_instruct_t instrType,
     uint8_t rd  = inputRegs->rd;
     uint8_t rs1 = inputRegs->rs1;
     uint8_t rs2 = inputRegs->rs2;
-    uint16_t halfword = 0;
     enum execute_return_values_t returnVal = EXECUTE_OK;
     switch (instrType)
     {
@@ -218,20 +228,20 @@ enum execute_return_values_t instructionExecute(enum rv32i_instruct_t instrType,
         break;
     // Load operations
     case RV32I_LB:
-        regFile[rd] = rv32iSignExtentByte( rv32iLoadByte(prog + rs1 + imm));
+        regFile[rd] = rv32iSignExtentByte( rv32iLoadByte(prog + regFile[rs1] + imm));
         break;
     case RV32I_LH:
         // TODO: Account for endianess - For now little endian is assumed
-        regFile[rd] = rv32iSignExtentHalfWord( rv32iLoadHalfWord(prog + rs1 + imm) );
+        regFile[rd] = rv32iSignExtentHalfWord( rv32iLoadHalfWord(prog + regFile[rs1] + imm) );
         break;
     case RV32I_LW:
-        regFile[rd] = rv32iLoadWord(prog + rs1 + imm);
+        regFile[rd] = rv32iLoadWord(prog + regFile[rs1] + imm);
         break;
     case RV32I_LBU:
-        regFile[rd] = rv32iLoadByte(prog + rs1 + imm);
+        regFile[rd] = rv32iLoadByte(prog + regFile[rs1] + imm);
         break;
     case RV32I_LHU:
-        regFile[rd] = rv32iLoadHalfWord(prog + rs1 + imm);
+        regFile[rd] = rv32iLoadHalfWord(prog + regFile[rs1] + imm);
         break;
     // Upper immediates operations
     case RV32I_LUI:
@@ -242,13 +252,13 @@ enum execute_return_values_t instructionExecute(enum rv32i_instruct_t instrType,
         break;
     // Store operations
     case RV32I_SB:
-        rv32iStoreByte(prog+rs1+imm, rs2);
+        rv32iStoreByte(prog + regFile[rs1] + imm, regFile[rs2]);
         break;
     case RV32I_SH:
-        rv32iStoreHalfWord(prog+rs1+imm, rs2);
+        rv32iStoreHalfWord(prog+regFile[rs1]+imm, regFile[rs2]);
         break;
     case RV32I_SW:
-        rv32iStoreWord(prog+rs1+imm, rs2);
+        rv32iStoreWord(prog+regFile[rs1]+imm, regFile[rs2]);
         break;
     default:
         returnVal = EXECUTE_UNKNOWN;
@@ -258,4 +268,13 @@ enum execute_return_values_t instructionExecute(enum rv32i_instruct_t instrType,
     regFile[0] = 0; // x0 is hardwired to 0. Instructions changing it are effectively NOPs.
 
     return returnVal;
+}
+
+void printRegisterFile(int32_t regFile[32])
+{
+    for (size_t i = 0; i < 31; i++)
+    {
+        fprintf(stderr, "x%ld=%d, ", i, regFile[i]);
+    }
+    fprintf(stderr, "x%d=%d\n", 31, regFile[31]);
 }

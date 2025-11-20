@@ -149,20 +149,22 @@ TEST(rv32i, SignExtentHalfWord)
 TEST(rv32i, LoadByte)
 {
     uint8_t A[5] = {0b11111111, 0b00000010, 0b10101010, 0b01010101, 0b10000000};
-    EXPECT_EQ(rv32iLoadByte(A+0), (int8_t) 0b11111111);
-    EXPECT_EQ(rv32iLoadByte(A+1), (int8_t) 0b00000010);
-    EXPECT_EQ(rv32iLoadByte(A+2), (int8_t) 0b10101010);
-    EXPECT_EQ(rv32iLoadByte(A+3), (int8_t) 0b01010101);
-    EXPECT_EQ(rv32iLoadByte(A+4), (int8_t) 0b10000000);
+    EXPECT_EQ(rv32iLoadByte(A+0), (int32_t) 0b11111111);
+    EXPECT_NE(rv32iLoadByte(A+0), (int8_t)  0b11111111); // Check for previous sign extension bug
+    EXPECT_EQ(rv32iLoadByte(A+1), (int32_t) 0b00000010);
+    EXPECT_EQ(rv32iLoadByte(A+2), (int32_t) 0b10101010);
+    EXPECT_EQ(rv32iLoadByte(A+3), (int32_t) 0b01010101);
+    EXPECT_EQ(rv32iLoadByte(A+4), (int32_t) 0b10000000);
 }
 
 TEST(rv32i, LoadHalfWord)
 {
     uint8_t A[5] = {0b11111111, 0b00000010, 0b10101010, 0b01010101, 0b10000000};
-    EXPECT_EQ(rv32iLoadHalfWord(A+0), (int16_t) 0b00000010'11111111);
-    EXPECT_EQ(rv32iLoadHalfWord(A+1), (int16_t) 0b10101010'00000010);
-    EXPECT_EQ(rv32iLoadHalfWord(A+2), (int16_t) 0b01010101'10101010);
-    EXPECT_EQ(rv32iLoadHalfWord(A+3), (int16_t) 0b10000000'01010101);
+    EXPECT_EQ(rv32iLoadHalfWord(A+0), (int32_t) 0b00000010'11111111);
+    EXPECT_EQ(rv32iLoadHalfWord(A+1), (int32_t) 0b10101010'00000010);
+    EXPECT_NE(rv32iLoadHalfWord(A+1), (int16_t) 0b10101010'00000010); // Check for previous sign extension bug
+    EXPECT_EQ(rv32iLoadHalfWord(A+2), (int32_t) 0b01010101'10101010);
+    EXPECT_EQ(rv32iLoadHalfWord(A+3), (int32_t) 0b10000000'01010101);
 }
 
 TEST(rv32i, LoadWord)
