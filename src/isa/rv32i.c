@@ -93,7 +93,7 @@ rv32i_instruct_t rv32iDecodeInstructType(int32_t instruct)
         switch (funct3)
         {
         case 0b000:
-            return RV32I_BGE;
+            return RV32I_BEQ;
         case 0b001:
             return RV32I_BNE;
         case 0b100:
