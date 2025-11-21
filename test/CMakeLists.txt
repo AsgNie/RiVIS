@@ -15,3 +15,5 @@ target_link_libraries(rv32i_test
 
 include(GoogleTest)
 gtest_discover_tests(rv32i_test)
+
+add_subdirectory(systemTest)
