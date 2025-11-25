@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
-#include "isaSimSoft.h"
+#include "simSoft.h"
 #include "rv32i.h"
 
 #define ERROR_MESSAGE_MAX_LENGTH (100)
@@ -23,7 +23,7 @@ static void readInputRegisters(int32_t instruct, inputRegs_t* inputRegs);
 static enum execute_return_values_t instructionExecute(enum rv32i_instruct_t instrType, inputRegs_t* inputRegs, int32_t regFile[32], uint8_t *prog, int32_t imm, uint32_t* pcPtr);
 static void printRegisterFile(int32_t regFile[32]);
 
-int8_t isaSimSoftRun(uint8_t *prog, uint32_t progSize, int32_t regFile[32], int8_t verbosity)
+int8_t simSoftRun(uint8_t *prog, uint32_t progSize, int32_t regFile[32], int8_t verbosity)
 {
     uint32_t pc = 0;
     int32_t instruction = 0;
@@ -182,7 +182,7 @@ enum execute_return_values_t instructionExecute(enum rv32i_instruct_t instrType,
             *pcPtr = (*pcPtr - 4) + imm;
         }
         break;
-    case RV32I_BLT: // TODO: Double check this
+    case RV32I_BLT:
         if (regFile[rs1] < regFile[rs2])
         {
             *pcPtr = (*pcPtr - 4) + imm;
