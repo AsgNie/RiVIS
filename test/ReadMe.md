@@ -18,7 +18,7 @@ This could be expanded to Windows by writing a `Batch` script (or Powershell) wi
 
 ## Test files license
 Generally all files in the project are licensed under the license presented in the root (when I get around to including it).
-The exception to this is the testfiles present in `test/systemTest/task#`. These files are included from the [Assignment specification Github](https://github.com/schoeberl/cae-lab/tree/master/finasgmt) and are made available under a BSD 2-Clause license.
+The exception to this is the testfiles present in `test/systemTest/task#`. These files are included from the [Assignment specification Github](https://github.com/schoeberl/cae-lab/tree/master/finasgmt), are copyrigthed by the Technical University of Denmark, and are made available under a BSD 2-Clause license.
 For the detailed license see `testfiles_LICENSE.txt`
 
 ## Further system tests
