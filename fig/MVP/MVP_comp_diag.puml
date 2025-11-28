@@ -1,0 +1,26 @@
+@startuml
+
+/' Meta-data
+2025-11-25
+MVP RiVIS component diagram
+'/
+
+package "main" {
+interface start
+[CLI]
+[Read binary]
+[SimSoftRun]
+[WriteBinary]
+interface exit
+}
+
+[SimSoft] -left->SimSoftRun
+[rv32i] --> [SimSoft]
+
+start -[#blue]-> [CLI]
+[CLI] -[#blue]-> [Read binary]
+[Read binary] -[#blue]-> [SimSoftRun]
+[SimSoftRun] -[#blue]-> [WriteBinary]
+[WriteBinary] -[#blue]-> exit
+
+@enduml

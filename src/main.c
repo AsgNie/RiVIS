@@ -5,7 +5,7 @@
 #include <stdlib.h> // Suplies EXIT_FAILURE, EXIT_SUCCESS, exit()
 #include <getopt.h> // For parsing command line options. getop() ect.
 #include <libgen.h> // Supplies basename() // TODO: Seems unnecessary
-#include "isaSimSoft.h"
+#include "simSoft.h"
 
 /*** Defines ***/
 #define OPTSTR "vi:o:h"
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
     }
 
     // Run program
-    int8_t res = isaSimSoftRun(prog, PROGRAM_SIZE_BYTES, regFile, options.verbosity);
+    int8_t res = simSoftRun(prog, PROGRAM_SIZE_BYTES, regFile, options.verbosity);
 
     // Store result to file
     if (fwrite(regFile, sizeof(uint8_t), REGISTRY_FILE_SIZE_BYTES, options.outFile) != REGISTRY_FILE_SIZE_BYTES )

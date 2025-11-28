@@ -2,12 +2,12 @@ add_library(SimSoft)
 
 target_sources(SimSoft
     PRIVATE
-        isaSimSoft.c
+        simSoft.c
 
     PUBLIC
         FILE_SET HEADERS
         FILES
-            isaSimSoft.h
+            simSoft.h
 )
 
 target_link_libraries(SimSoft

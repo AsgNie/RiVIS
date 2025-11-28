@@ -1,8 +1,9 @@
 @startuml
 
-/'title
-  Simple ISA simulator
-end title '/
+/' Meta-data
+2025-11-25
+MVP SoftSimRun flow diagram
+'/
 
 partition "main" {
   start
@@ -12,14 +13,14 @@ partition "main" {
 progSize
 regFile*; <<input>>
 
-partition "ISA simulator" {
-  :Allocate stack memory
-  Initialise stack;
+partition "simSoftRun" {
   :PC = 0;
 while (PC < progSize?) is (Yes)
-    :Load instruction;
+    :Instruction fetch;
     :Increment PC;
-    :Decode Instruction;
+    :Decode instruction type;
+    :Decode registers;
+    :Generate immediate;
     :Execute instruction;
     note left
       Main component:
@@ -27,11 +28,12 @@ while (PC < progSize?) is (Yes)
       and perform operations that changes
       program state e.g:
       ALU operations, branch, load, store.
+      Can change PC on jump or branch instructions.
       ====
-      Can exit early via //ecall// instruction.
+      Can exit via //ecall// instruction.
     end note
 endwhile (No)
-  :Free stack memory;
+  :Return with status value;
 }
 
 :prog*

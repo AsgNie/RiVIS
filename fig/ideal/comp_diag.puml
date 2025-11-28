@@ -1,0 +1,61 @@
+@startuml
+
+/' Meta-data
+2025-11-27
+RiVIS component diagram
+'/
+
+/' Notes
+Blue arrows are used to show order of execution in main.
+Remaining arrows show how components are connected. Dashed arrows are used to indicate that the
+components can be connected together.
+'/
+
+package "main" {
+interface start
+[CLI]
+[ReadBinary]
+[SimControlRun]
+[WriteBinary]
+interface exit
+}
+start -[#blue]-> [CLI]
+[CLI] -[#blue]-> [ReadBinary]
+[ReadBinary] -[#blue]-> [SimControlRun]
+[SimControlRun] -[#blue]-> [WriteBinary]
+[WriteBinary] -[#blue]-> exit
+
+component SimControl {
+    [runFree]
+    [runSteps]
+    [simState]
+}
+[userInput] --> runSteps
+[OS timing] --> runSteps
+[SimControl] --> [SimControlRun]
+
+package "simulators" {
+[simSoft]
+[simSingleCycle]
+[sim5Stage]
+}
+"simulators" --> [graphic]
+[graphic] -up-> [runSteps]
+[rv32utils] -down-> "simulators"
+
+package "isa" {
+[rv32i]
+frame "pos. extensions" {
+  [rv32f]
+  [rv64m]
+}
+}
+"isa" --> "simulators"
+
+interface BindFunctPointers
+[simSoft] ..> BindFunctPointers
+[simSingleCycle] ..> BindFunctPointers
+[sim5Stage] ..> BindFunctPointers
+BindFunctPointers --> [SimControl]
+
+@enduml

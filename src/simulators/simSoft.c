@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
-#include "isaSimSoft.h"
+#include "simSoft.h"
 #include "rv32i.h"
 
 #define ERROR_MESSAGE_MAX_LENGTH (100)
@@ -18,12 +18,11 @@ typedef enum execute_return_values_t
 } execute_return_values_t;
 
 /*** Static function prototypes ***/
-static int32_t instructionFetch(uint32_t pc, const uint8_t* const prog);
 static void readInputRegisters(int32_t instruct, inputRegs_t* inputRegs);
 static enum execute_return_values_t instructionExecute(enum rv32i_instruct_t instrType, inputRegs_t* inputRegs, int32_t regFile[32], uint8_t *prog, int32_t imm, uint32_t* pcPtr);
 static void printRegisterFile(int32_t regFile[32]);
 
-int8_t isaSimSoftRun(uint8_t *prog, uint32_t progSize, int32_t regFile[32], int8_t verbosity)
+int8_t simSoftRun(uint8_t *prog, uint32_t progSize, int32_t regFile[32], int8_t verbosity)
 {
     uint32_t pc = 0;
     int32_t instruction = 0;
@@ -35,7 +34,7 @@ int8_t isaSimSoftRun(uint8_t *prog, uint32_t progSize, int32_t regFile[32], int8
     while (pc < progSize)
     {
         /* IF: Instruction Fetch */
-        instruction = instructionFetch(pc, prog);
+        instruction = rv32iLoadWord(prog+pc);
         pc += 4;
 
         /* ID: Instruction Decode*/
@@ -82,16 +81,6 @@ int8_t isaSimSoftRun(uint8_t *prog, uint32_t progSize, int32_t regFile[32], int8
     }
 
     return 0;
-}
-
-int32_t instructionFetch(uint32_t pc, const uint8_t *const prog)
-{
-    // TODO: Consider evaluating endianess in the pre-processor and compile the appropiate variant code
-    // Big-endian target architecture
-    //return (prog[pc] << 24 | prog[pc+1] << 16 | prog[pc+2] << 8 | prog[pc+3]);
-
-    // Little-endian target architecture
-    return (prog[pc] | prog[pc+1] << 8 | prog[pc+2] << 16 | prog[pc+3] << 24);
 }
 
 void readInputRegisters(int32_t instruct, inputRegs_t* inputRegs)
@@ -182,7 +171,7 @@ enum execute_return_values_t instructionExecute(enum rv32i_instruct_t instrType,
             *pcPtr = (*pcPtr - 4) + imm;
         }
         break;
-    case RV32I_BLT: // TODO: Double check this
+    case RV32I_BLT:
         if (regFile[rs1] < regFile[rs2])
         {
             *pcPtr = (*pcPtr - 4) + imm;
