@@ -45,10 +45,10 @@ RiVIS is developped and tested on Linux. I anticipate that the current version c
 ```
 
 ## Design
-For information on the design see [Design ReadMe](design/ReadMe.md)
+For information on the design see [Design ReadMe](design/ReadMe.md).
 
 ## Tests
-For information on unit- and system testing see [Test ReadMe](test/ReadMe.md)
+For information on unit- and system testing see [Test ReadMe](test/ReadMe.md).
 
 ## Milestones
 Must have componenets (see design for elaboration):
@@ -66,13 +66,16 @@ Nice to have components:
 - [x] CLI support for programe usage.
 - [x] Verbosity support; CLI and printing of runtime information
 - [x] Debug information on simulator error, e.g. `fwrite` failure, or on reading unknown instruction.
+- [ ] Clean-up main by moving components (CLI, readFile, writeFile) into seperate files. Helps readability and allows for better unittesting.
+- [ ] Decide on an open-source license and add it to project.
 - [x] Automated unit tests.
 - [x] Automated system tests of binary programs with known results.
-- [ ] Support for Continuous integration
-- [ ] Add SingleCycle simulator implementation
-- [ ] Add 5 stage pipelined simulator implementation
+- [ ] Support for Continuous integration.
+- [ ] Add SingleCycle simulator implementation.
+- [ ] Add 5 stage pipelined simulator implementation.
 - [ ] Option to single step simulation.
 - [ ] Implement an ASCII UI that displays processor state.
+- [ ] Setup project to runs cross-platform (Linux, Windows), adapt tests to be cross-platform, and make testing on multiple OS'es part of CI setup.
 
 
 ## References
