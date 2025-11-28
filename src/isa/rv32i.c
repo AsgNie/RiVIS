@@ -7,13 +7,14 @@ rv32i_instruct_t rv32iDecodeInstructType(int32_t instruct)
     uint8_t opcode, funct3, funct7;
     uint16_t funct12;
 
-    opcode = rv32iGetOpcode(instruct);
+    opcode  = rv32iGetOpcode(instruct);
+    funct3  = rv32iGetFunct3(instruct);
+    funct7  = rv32iGetFunct7(instruct);
+    funct12 = rv32iGetFunct12(instruct);
 
     switch (opcode)
     {
     case RV32I_OPCODE_ALU:
-        funct3 = rv32iGetFunct3(instruct);
-        funct7 = rv32iGetFunct7(instruct);
         switch (funct3)
         {
         case 0b000:
@@ -54,8 +55,6 @@ rv32i_instruct_t rv32iDecodeInstructType(int32_t instruct)
         }
         break;
     case RV32I_OPCODE_ALU_IMM:
-        funct3 = rv32iGetFunct3(instruct);
-        funct7 = rv32iGetFunct7(instruct);
         switch (funct3)
         {
         case 0b000:
@@ -89,7 +88,6 @@ rv32i_instruct_t rv32iDecodeInstructType(int32_t instruct)
     case RV32I_OPCODE_AUIPC:
         return RV32I_AUIPC;
     case RV32I_OPCODE_BRANCH:
-        funct3 = rv32iGetFunct3(instruct);
         switch (funct3)
         {
         case 0b000:
@@ -108,7 +106,6 @@ rv32i_instruct_t rv32iDecodeInstructType(int32_t instruct)
             return RV32I_NOT_SUPPORTED;
         }
     case RV32I_OPCODE_ENV:
-        funct12 = rv32iGetFunct12(instruct);
         switch (funct12)
         {
         case 0b000000000000:
@@ -123,7 +120,6 @@ rv32i_instruct_t rv32iDecodeInstructType(int32_t instruct)
     case RV32I_OPCODE_JALR:
         return RV32I_JALR;
     case RV32I_OPCODE_LOAD:
-        funct3 = rv32iGetFunct3(instruct);
         switch (funct3)
         {
         case 0b000:
@@ -142,7 +138,6 @@ rv32i_instruct_t rv32iDecodeInstructType(int32_t instruct)
     case RV32I_OPCODE_LUI:
         return RV32I_LUI;
     case RV32I_OPCODE_STORE:
-        funct3 = rv32iGetFunct3(instruct);
         switch (funct3)
         {
         case 0b000:
