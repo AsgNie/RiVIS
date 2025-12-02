@@ -9,6 +9,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+# Enable error flags
+set(CMAKE_C_FLAGS "-Wextra -Wall \
+  -Werror=switch -Werror=return-type \
+  -Werror=unreachable-code")
+
 include(FetchContent)
 FetchContent_Declare(
   googletest
