@@ -1,4 +1,7 @@
-# RISC-V ISA Simulator - RiVIS
+# RiVIS - RISC-V ISA Simulator
+
+[![Ubuntu 24.04](https://github.com/AsgNie/RiVIS/actions/workflows/ubuntu-build-and-test.yml/badge.svg)](https://github.com/AsgNie/RiVIS/actions/workflows/ubuntu-build-and-test.yml)
+
 This repository contains my work on a RISC-V Instruction Set Architeture simulator, i.e. a program that simulates the execution of RISC-V binary instructions in software. The program is developed partly as the final assignment of the course [02155 - Computer Architecture and Engineering](https://kurser.dtu.dk/course/02155) as taught on the Technical University of Denmark autumn 2025, and partly as an exercise in designing, implementing and managing a reasonably sized software project with a build environment, version control, tests, and continious integration.
 
 For the DTU assignment specification see [Assignment specification Github](https://github.com/schoeberl/cae-lab/tree/master/finasgmt).
