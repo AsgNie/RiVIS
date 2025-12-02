@@ -111,7 +111,7 @@ rv32i_instruct_t rv32iDecodeInstructType(int32_t instruct)
         case 0b000000000000:
             return RV32I_ECALL;
         default:
-            return RV32I_OPCODE_TYPE_UNKNOWN;
+            return RV32I_NOT_SUPPORTED;
         }
     case RV32I_OPCODE_FEN_PAUS:
         return RV32I_NOT_SUPPORTED;
