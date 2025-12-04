@@ -7,8 +7,12 @@ target_sources(RiVIS
 
 target_link_libraries(RiVIS
     PRIVATE
-        SimSoft
+        cli
+        fileutils
+        simSoft
 )
 
 add_subdirectory(isa)
+add_subdirectory(cli)
+add_subdirectory(fileutils)
 add_subdirectory(simulators)
