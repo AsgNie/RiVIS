@@ -1,6 +1,6 @@
-add_library(SimSoft)
+add_library(simSoft)
 
-target_sources(SimSoft
+target_sources(simSoft
     PRIVATE
         simSoft.c
 
@@ -10,7 +10,7 @@ target_sources(SimSoft
             simSoft.h
 )
 
-target_link_libraries(SimSoft
+target_link_libraries(simSoft
     PRIVATE
         rv32i
 )
