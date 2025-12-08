@@ -1,45 +1,45 @@
 enable_testing()
 
 # rv32i tests
-add_executable(rv32i_test)
-target_sources(rv32i_test
+add_executable(test_rv32i)
+target_sources(test_rv32i
     PRIVATE
-        rv32i_test.cpp
+        test_rv32i.cpp
 )
-target_link_libraries(rv32i_test
+target_link_libraries(test_rv32i
     PRIVATE
         GTest::gtest_main
         rv32i
 )
 
 # cli tests
-add_executable(cli_test)
-target_sources(cli_test
+add_executable(test_cli)
+target_sources(test_cli
     PRIVATE
-        cli_test.cpp
+        test_cli.cpp
 )
-target_link_libraries(cli_test
+target_link_libraries(test_cli
     PRIVATE
         GTest::gtest_main
         cli
 )
 
 # fileutils tests
-add_executable(fileutils_test)
-target_sources(fileutils_test
+add_executable(test_fileutils)
+target_sources(test_fileutils
     PRIVATE
-        fileutils_test.cpp
+        test_fileutils.cpp
         fff.h
 )
-target_link_libraries(fileutils_test
+target_link_libraries(test_fileutils
     PRIVATE
         GTest::gtest_main
         fileutils
 )
 
 include(GoogleTest)
-gtest_discover_tests(rv32i_test)
-gtest_discover_tests(cli_test)
-gtest_discover_tests(fileutils_test)
+gtest_discover_tests(test_rv32i)
+gtest_discover_tests(test_cli)
+gtest_discover_tests(test_fileutils)
 
 add_subdirectory(systemTest)
