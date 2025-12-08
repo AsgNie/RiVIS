@@ -69,11 +69,11 @@ Nice to have components:
 - [x] CLI support for programe usage.
 - [x] Verbosity support; CLI and printing of runtime information
 - [x] Debug information on simulator error, e.g. `fwrite` failure, or on reading unknown instruction.
-- [ ] Clean-up main by moving components (CLI, readFile, writeFile) into seperate files. Helps readability and allows for better unittesting.
+- [x] Clean-up main by moving components (CLI, readFile, writeFile) into seperate files. Helps readability and allows for better unittesting.
 - [ ] Decide on an open-source license and add it to project.
 - [x] Automated unit tests.
 - [x] Automated system tests of binary programs with known results.
-- [ ] Support for Continuous integration.
+- [x] Support for Continuous integration.
 - [ ] Add SingleCycle simulator implementation.
 - [ ] Add 5 stage pipelined simulator implementation.
 - [ ] Option to single step simulation.
