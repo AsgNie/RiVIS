@@ -24,9 +24,22 @@ target_link_libraries(cli_test
         cli
 )
 
+# fileutils tests
+add_executable(fileutils_test)
+target_sources(fileutils_test
+    PRIVATE
+        fileutils_test.cpp
+        fff.h
+)
+target_link_libraries(fileutils_test
+    PRIVATE
+        GTest::gtest_main
+        fileutils
+)
 
 include(GoogleTest)
 gtest_discover_tests(rv32i_test)
 gtest_discover_tests(cli_test)
+gtest_discover_tests(fileutils_test)
 
 add_subdirectory(systemTest)
